@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 
+from src.core.config import settings
+
 app = FastAPI(
-    title="VectorLoom API",
+    title=settings.APP_NAME,
     description="Context-Aware Neural Recommendation Engine",
-    version="1.0.0"
+    version=settings.APP_VERSION,
 )
 
 
@@ -12,7 +14,7 @@ async def root():
     return {
         "project": "VectorLoom",
         "status": "Running",
-        "version": "1.0.0"
+        "version": settings.APP_VERSION
     }
 
 

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, UploadFile, File
+
 from src.schemas.upload_schema import UploadResponse
 from src.services.file_service import FileService
-from src.schemas.upload_schema import UploadResponse
+from src.ingestion.ingestion_service import IngestionService
 
 router = APIRouter()
 

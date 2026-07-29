@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from src.ingestion.pdf_loader import PDFLoader
-from src.ingestion.text_loader import TextLoader
+from src.ingestion.txt_loader import TextLoader
 from src.ingestion.docx_loader import DocxLoader
 from src.ingestion.image_loader import ImageLoader
 

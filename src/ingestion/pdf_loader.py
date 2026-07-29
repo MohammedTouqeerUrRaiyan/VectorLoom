@@ -25,8 +25,14 @@ class PDFLoader:
 
             extracted_text.append(page.get_text("text"))
 
-        document.close()
+        with fitz.open(file_path) as document:
+            pages = len(document)
 
-        full_text = "\n".join(extracted_text)
+            extracted_text = []
 
-        return full_text, pages
+            for page in document:
+                extracted_text.append(page.get_text())
+
+        return "\n".join(extracted_text), pages
+
+                

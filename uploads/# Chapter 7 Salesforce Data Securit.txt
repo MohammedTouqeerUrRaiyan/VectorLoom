@@ -1,0 +1,1018 @@
+# Chapter 7: Salesforce Data Security Model
+
+---
+
+# Learning Objectives
+
+By the end of this chapter, you will understand:
+
+* ✅ What the Salesforce Security Model is
+* ✅ Why Security is important
+* ✅ The 4 Levels of Security
+* ✅ Organization-Wide Defaults (OWD)
+* ✅ Role Hierarchy
+* ✅ Sharing Rules
+* ✅ Manual Sharing
+* ✅ Teams (Account, Opportunity, Case)
+* ✅ Profiles
+* ✅ Permission Sets
+* ✅ Field-Level Security
+* ✅ Object-Level Security
+* ✅ Record-Level Security
+* ✅ Interview Questions
+* ✅ Certification Notes
+
+---
+
+# 1. What is the Salesforce Security Model?
+
+## Definition
+
+The **Salesforce Security Model** is a framework that determines:
+
+* **Who can log in**
+* **What objects they can access**
+* **Which fields they can see**
+* **Which records they can access**
+* **What actions they can perform**
+
+Think of Salesforce security as **multiple security gates**. A user must pass through each gate before accessing data.
+
+> ⭐ **Important Keyword:** **Layered Security**
+
+---
+
+# Real-Life Example
+
+Imagine a bank.
+
+To enter the locker room:
+
+```
+Main Gate
+     ↓
+Security Guard
+     ↓
+Locker Room
+     ↓
+Your Locker
+```
+
+Similarly, in Salesforce:
+
+```
+Login
+    ↓
+Profile
+    ↓
+Permission Set
+    ↓
+OWD
+    ↓
+Role Hierarchy
+    ↓
+Sharing Rules
+    ↓
+Manual Sharing
+```
+
+Each layer adds or restricts access.
+
+---
+
+# Salesforce Security Layers
+
+Salesforce security is divided into **4 levels**.
+
+```
+Salesforce Security
+
+│
+
+├── Organization Level
+
+├── Object Level
+
+├── Field Level
+
+└── Record Level
+```
+
+---
+
+# 2. Organization-Level Security
+
+Controls:
+
+* Who can log in
+* From where
+* At what time
+
+---
+
+## Features
+
+* Login Hours
+* Login IP Ranges
+* Password Policies
+* Multi-Factor Authentication (MFA)
+
+---
+
+### Example
+
+ABC Company
+
+Office Hours
+
+```
+9 AM – 6 PM
+```
+
+If Rahul tries to log in at
+
+```
+11 PM
+```
+
+Salesforce blocks login.
+
+---
+
+Another Example
+
+Company IP
+
+```
+192.168.1.0
+```
+
+Employee tries to log in from another country.
+
+Salesforce asks for identity verification or blocks access depending on the configuration.
+
+---
+
+# 3. Object-Level Security
+
+Controls
+
+**Can the user access an object?**
+
+Managed by:
+
+* **Profiles**
+* **Permission Sets**
+
+---
+
+## Example
+
+Objects
+
+* Account
+* Contact
+* Opportunity
+* Case
+
+Sales User
+
+| Object      | Access             |
+| ----------- | ------------------ |
+| Account     | Read, Create, Edit |
+| Opportunity | Read, Create, Edit |
+| Case        | Read Only          |
+| Employee    | No Access          |
+
+The Sales user cannot even open the **Employee** object.
+
+---
+
+# Object Permissions (CRED)
+
+| Permission | Meaning        |
+| ---------- | -------------- |
+| **Create** | Create records |
+| **Read**   | View records   |
+| **Edit**   | Modify records |
+| **Delete** | Delete records |
+
+Additional:
+
+* **View All**
+* **Modify All**
+
+---
+
+# 4. Field-Level Security (FLS)
+
+Controls
+
+**Can the user see or edit a particular field?**
+
+---
+
+## Example
+
+Employee Object
+
+Fields
+
+* Name
+* Salary
+* Bonus
+* Phone
+
+HR Manager
+
+```
+Name ✔
+Salary ✔
+Bonus ✔
+Phone ✔
+```
+
+Sales User
+
+```
+Name ✔
+Salary ❌
+Bonus ❌
+Phone ✔
+```
+
+The Sales user can open the Employee record but cannot see the **Salary** field.
+
+---
+
+# 5. Record-Level Security
+
+Controls
+
+**Which individual records can a user access?**
+
+Managed by:
+
+* Organization-Wide Defaults (OWD)
+* Role Hierarchy
+* Sharing Rules
+* Manual Sharing
+* Teams
+
+This is the most commonly tested topic in Salesforce interviews and certifications.
+
+---
+
+# Understanding Record-Level Security
+
+Imagine there are 100 Accounts.
+
+Rahul owns 10.
+
+Priya owns 20.
+
+John owns 30.
+
+Question:
+
+Can Rahul see Priya's Accounts?
+
+This depends on **Record-Level Security**.
+
+---
+
+# 6. Organization-Wide Defaults (OWD)
+
+## Definition
+
+**Organization-Wide Defaults (OWD)** define the **default level of access** users have to records they do not own.
+
+> ⭐ **Important Keyword:** **Baseline Record Access**
+
+---
+
+## Think of OWD as the starting point.
+
+Example
+
+```
+OWD
+
+↓
+
+Private
+```
+
+Everyone starts with **Private** access.
+
+Additional access is granted later.
+
+---
+
+## Types of OWD
+
+| OWD                  | Meaning                      |
+| -------------------- | ---------------------------- |
+| Private              | Only owner can access        |
+| Public Read Only     | Everyone can view            |
+| Public Read/Write    | Everyone can view and edit   |
+| Controlled by Parent | Child inherits parent access |
+
+---
+
+## Example 1 – Private
+
+Sales Team
+
+Rahul owns
+
+```
+Opportunity A
+```
+
+Priya
+
+Cannot see it.
+
+Manager
+
+Can see it through **Role Hierarchy**.
+
+---
+
+## Example 2 – Public Read Only
+
+Everyone
+
+Can view
+
+Opportunity
+
+Cannot edit
+
+Only owner can edit.
+
+---
+
+## Example 3 – Public Read/Write
+
+Everyone
+
+Can
+
+View
+
+Edit
+
+Update
+
+Opportunity.
+
+Rarely used for sensitive objects.
+
+---
+
+## Example 4 – Controlled by Parent
+
+Contact
+
+↓
+
+Account
+
+If user can access Account,
+
+Automatically
+
+Can access Contact.
+
+---
+
+# 7. Role Hierarchy
+
+## Definition
+
+Allows users **higher in the hierarchy** to access records owned by users below them.
+
+Example
+
+```
+CEO
+
+↓
+
+Sales Director
+
+↓
+
+Sales Manager
+
+↓
+
+Sales Executive
+```
+
+Rahul
+
+Creates Opportunity.
+
+Manager
+
+Can see it.
+
+CEO
+
+Can also see it.
+
+---
+
+# Salesforce Example
+
+OWD
+
+Private
+
+Rahul owns
+
+```
+Opportunity = ₹5,00,000
+```
+
+Without Role Hierarchy
+
+Manager
+
+Cannot see.
+
+With Role Hierarchy
+
+Manager
+
+Can see automatically.
+
+---
+
+# 8. Sharing Rules
+
+Sometimes users from different roles need access.
+
+Role Hierarchy is not enough.
+
+Use
+
+**Sharing Rules**
+
+---
+
+## Example
+
+Company
+
+Departments
+
+```
+Sales
+
+HR
+
+Finance
+```
+
+Finance needs to view Sales Opportunities.
+
+Role Hierarchy cannot help because Finance is in a different branch.
+
+Create
+
+Sharing Rule
+
+```
+Share Sales Opportunities
+
+↓
+
+Finance
+
+Read Only
+```
+
+Done.
+
+---
+
+## Types
+
+* Owner-Based Sharing Rule
+* Criteria-Based Sharing Rule
+
+---
+
+### Owner-Based Example
+
+Owner
+
+Sales Team
+
+↓
+
+Share
+
+Marketing Team
+
+---
+
+### Criteria-Based Example
+
+Share
+
+All Accounts
+
+Where
+
+```
+Country = India
+```
+
+with
+
+Support Team.
+
+---
+
+# 9. Manual Sharing
+
+Sometimes
+
+Only one record
+
+Needs sharing.
+
+Example
+
+Rahul owns
+
+Opportunity
+
+Worth
+
+₹2 Crore
+
+Manager asks
+
+Share with Priya.
+
+Rahul clicks
+
+```
+Sharing
+
+↓
+
+Add User
+
+↓
+
+Priya
+
+↓
+
+Read/Write
+```
+
+Only that record is shared.
+
+---
+
+# 10. Teams
+
+Salesforce provides team-based sharing.
+
+## Account Team
+
+Example
+
+Account
+
+ABC Ltd
+
+Members
+
+* Sales Executive
+* Sales Manager
+* Support Engineer
+
+Everyone gets predefined access.
+
+---
+
+## Opportunity Team
+
+Opportunity
+
+₹50 Lakhs
+
+Members
+
+* Sales Rep
+* Presales
+* Finance
+
+All collaborate.
+
+---
+
+## Case Team
+
+Case
+
+Customer Complaint
+
+Members
+
+* Support Engineer
+* Escalation Manager
+* QA Engineer
+
+---
+
+# 11. Profiles
+
+Profiles answer
+
+**What can the user do?**
+
+Example
+
+Sales User
+
+Can
+
+Create Opportunity
+
+Edit Opportunity
+
+Delete Opportunity
+
+---
+
+# 12. Permission Sets
+
+Permission Sets
+
+Add extra permissions.
+
+Example
+
+Sales User
+
+Needs
+
+Export Reports
+
+Assign
+
+Permission Set
+
+```
+Export Reports
+```
+
+No new Profile needed.
+
+---
+
+# 13. Field-Level Security Example
+
+Employee Object
+
+```
+Name ✔
+
+Salary ❌
+
+Bonus ❌
+
+Address ✔
+```
+
+Sales team
+
+Cannot see Salary.
+
+HR
+
+Can.
+
+---
+
+# Complete Security Flow
+
+Imagine
+
+John logs into Salesforce.
+
+Salesforce checks:
+
+```
+1. Login Hours ✔
+
+↓
+
+2. Login IP ✔
+
+↓
+
+3. Profile ✔
+
+↓
+
+4. Permission Set ✔
+
+↓
+
+5. OWD ✔
+
+↓
+
+6. Role Hierarchy ✔
+
+↓
+
+7. Sharing Rules ✔
+
+↓
+
+8. Manual Sharing ✔
+
+↓
+
+9. Teams ✔
+
+↓
+
+Final Access Granted
+```
+
+---
+
+# Complete Real-Life Salesforce Example
+
+Company
+
+ABC Technologies
+
+Employees
+
+```
+CEO
+
+↓
+
+Sales Manager
+
+↓
+
+Rahul
+```
+
+Rahul
+
+Owns
+
+Opportunity
+
+```
+₹10,00,000
+```
+
+### Step 1
+
+Profile
+
+Sales User
+
+Allows
+
+Read Opportunity.
+
+---
+
+### Step 2
+
+Permission Set
+
+Export Reports
+
+Assigned.
+
+---
+
+### Step 3
+
+OWD
+
+Private
+
+Only Rahul sees it.
+
+---
+
+### Step 4
+
+Role Hierarchy
+
+Manager sees Rahul's Opportunity.
+
+---
+
+### Step 5
+
+Finance Team
+
+Needs access.
+
+Administrator creates
+
+Sharing Rule.
+
+Finance
+
+Can Read.
+
+---
+
+### Step 6
+
+Priya needs temporary access.
+
+Rahul manually shares.
+
+---
+
+### Final Result
+
+| User          | Access                             |
+| ------------- | ---------------------------------- |
+| Rahul         | Read/Edit                          |
+| Sales Manager | Read/Edit (through Role Hierarchy) |
+| Finance       | Read Only (Sharing Rule)           |
+| Priya         | Read Only (Manual Sharing)         |
+| HR            | No Access                          |
+
+---
+
+# Common Interview Questions
+
+## Q1. What are the four levels of Salesforce Security?
+
+**Answer**
+
+1. Organization Level
+2. Object Level
+3. Field Level
+4. Record Level
+
+---
+
+## Q2. What is OWD?
+
+**Answer**
+
+Organization-Wide Defaults define the **default record access** for users who do not own a record.
+
+---
+
+## Q3. Difference between Profile and Role?
+
+| Profile                    | Role                                    |
+| -------------------------- | --------------------------------------- |
+| Controls what users can do | Controls which records users can access |
+
+---
+
+## Q4. When should Sharing Rules be used?
+
+**Answer**
+
+When users in different roles need access to records that Role Hierarchy does not provide.
+
+---
+
+## Q5. Can Permission Sets increase Record-Level Security?
+
+**Answer**
+
+No.
+
+Permission Sets grant **object, field, and system permissions**, but they do **not** share records. Record sharing is controlled by **OWD, Role Hierarchy, Sharing Rules, Manual Sharing, and Teams**.
+
+---
+
+# Certification Notes ⭐
+
+Remember this sequence:
+
+```
+Profile
+
+↓
+
+Permission Set
+
+↓
+
+OWD
+
+↓
+
+Role Hierarchy
+
+↓
+
+Sharing Rules
+
+↓
+
+Manual Sharing
+
+↓
+
+Teams
+```
+
+---
+
+# Easy Memory Trick
+
+Think of security as a **4-story building**:
+
+```
+🏢 Organization Level
+      ↓
+🏢 Object Level
+      ↓
+🏢 Field Level
+      ↓
+🏢 Record Level
+```
+
+You must pass every floor to reach the data.
+
+---
+
+# Summary Table
+
+| Security Layer         | Controls                                | Example                                                           |
+| ---------------------- | --------------------------------------- | ----------------------------------------------------------------- |
+| **Organization Level** | Login access                            | Login Hours, IP Ranges, MFA                                       |
+| **Object Level**       | Which objects users can access          | Account, Opportunity, Case permissions via Profile/Permission Set |
+| **Field Level**        | Which fields users can see or edit      | Hide the Salary field from Sales users                            |
+| **Record Level**       | Which specific records users can access | OWD, Role Hierarchy, Sharing Rules, Manual Sharing, Teams         |
+
+---
+
+# 📌 Quick Revision Box
+
+### **Organization-Level Security**
+
+* Login Hours
+* Login IP Ranges
+* Password Policies
+* MFA
+
+### **Object-Level Security**
+
+* Profiles
+* Permission Sets
+* CRED (Create, Read, Edit, Delete)
+* View All
+* Modify All
+
+### **Field-Level Security**
+
+* Hide or make fields read-only
+* Controlled by Profiles and Permission Sets
+
+### **Record-Level Security**
+
+* **OWD** = Baseline record access
+* **Role Hierarchy** = Managers inherit access
+* **Sharing Rules** = Automatic sharing across roles/groups
+* **Manual Sharing** = Share one specific record
+* **Teams** = Collaborative record access
+
+---
+
+## 💡 Interview Scenario
+
+**Question:** *Your company's Opportunity OWD is set to **Private**. Rahul (Sales Executive) creates an Opportunity. The Sales Manager should automatically see it, Finance should have read-only access to all Opportunities, and Priya (another Sales Executive) should temporarily help Rahul on just this one Opportunity. How would you configure Salesforce?*
+
+**Answer:**
+
+1. **Profile** – Give Rahul and the Sales Manager object permissions to read/edit Opportunities.
+2. **OWD** – Set Opportunity access to **Private**.
+3. **Role Hierarchy** – Place the Sales Manager above Rahul so the manager automatically inherits access.
+4. **Sharing Rule** – Create an owner-based or criteria-based sharing rule to give the **Finance** team **Read Only** access.
+5. **Manual Sharing** – Rahul shares the specific Opportunity with **Priya** for temporary collaboration.
+
+This layered approach is a textbook example of how Salesforce's **data security model** works in real-world implementations.

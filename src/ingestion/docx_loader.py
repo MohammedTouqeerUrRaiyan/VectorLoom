@@ -1,23 +1,18 @@
-from pathlib import Path
 from docx import Document
 
-
 class DocxLoader:
-    """
-    Loads Microsoft Word (.docx) documents.
-    """
+    def load(self, file_path: str) -> str:
+        """
+        Load the content of a DOCX file.
 
-    @staticmethod
-    def load(file_path: Path) -> tuple[str, int]:
+        Args:
+            file_path (str): The path to the DOCX file.
 
+        Returns:
+            str: The text content of the DOCX file.
+        """
         document = Document(file_path)
-
-        text = []
-
+        full_text = []
         for paragraph in document.paragraphs:
-            text.append(paragraph.text)
-
-        full_text = "\n".join(text)
-
-        # DOCX has no real page information
-        return full_text, 1
+            full_text.append(paragraph.text)
+        return '\n'.join(full_text)

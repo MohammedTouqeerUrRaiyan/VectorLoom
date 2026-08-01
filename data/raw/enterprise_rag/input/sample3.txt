@@ -1,0 +1,21 @@
+EnterpriseRAG Sample Dataset
+
+Document ID: DOC-0001
+Source Type: Confluence
+Title: Deployment Runbook
+Content: Steps to deploy and validate the production service.
+
+Document ID: DOC-0002
+Source Type: Wiki
+Title: Employee Handbook
+Content: Company policies, leave rules, and onboarding process.
+
+Document ID: DOC-0003
+Source Type: Support KB
+Title: Password Reset Guide
+Content: Instructions for resetting passwords and MFA recovery.
+
+Document ID: DOC-0004
+Source Type: Manual
+Title: Database Backup
+Content: Daily backup schedule and restore procedure.

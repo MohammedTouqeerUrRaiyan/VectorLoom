@@ -1,25 +1,13 @@
-from pathlib import Path
+import chardet
 
-
-class TextLoader:
-    """
-    Loads plain text (.txt) documents.
-    """
-
-    @staticmethod
-    def load(file_path: Path) -> tuple[str, int]:
-        """
-        Reads a text file and returns:
-            - extracted text
-            - page count (always 1 for text files)
-        """
-
-        with open(
-            file_path,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            text = file.read()
-
-        return text, 1
+class TxtLoader:
+    def load(self,  file_path: str) -> list[str]:
+        with open(file_path, 'rb') as f:
+            raw_data = f.read(10000)  # Read the first 10KB for encoding detection
+            result = chardet.detect(raw_data)
+            encoding = result['encoding']
+        
+        with open(file_path, 'r', encoding=encoding) as f:
+            text = f.read()
+        
+        return [text]

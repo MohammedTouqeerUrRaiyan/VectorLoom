@@ -1,38 +1,21 @@
-from pydantic import BaseModel, Field
-from typing import Dict
+from typing import Optional
+from pydantic import BaseModel
 
 
 class Chunk(BaseModel):
-    """
-    Standard chunk model used throughout VectorLoom.
-    """
 
-    chunk_id: str = Field(
-        description="Unique identifier for the chunk"
-    )
+    chunk_id: str
 
-    document_name: str = Field(
-        description="Original document filename"
-    )
+    document_name: str
 
-    page_number: int = Field(
-        default=1,
-        description="Page number from which the chunk originated"
-    )
+    page_number: int
 
-    chunk_index: int = Field(
-        description="Sequential chunk number"
-    )
+    chunk_index: int
 
-    text: str = Field(
-        description="Chunk text"
-    )
+    text: str
 
-    character_count: int = Field(
-        description="Number of characters in this chunk"
-    )
+    character_count: int
 
-    metadata: Dict = Field(
-        default_factory=dict,
-        description="Additional metadata"
-    )
+    metadata: dict
+
+    embedding: Optional[list[float]] = None

@@ -1,6 +1,6 @@
 import chardet
 
-class TxtLoader:
+class TextLoader:
     def load(self,  file_path: str) -> list[str]:
         with open(file_path, 'rb') as f:
             raw_data = f.read(10000)  # Read the first 10KB for encoding detection

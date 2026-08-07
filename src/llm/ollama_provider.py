@@ -1,33 +1,39 @@
 from ollama import Client
 
-from src.llm.llm_provider import BaseLLM
-from src.llm.llm_config import OLLAMA_MODEL
 
-
-class OllamaProvider(BaseLLM):
+class OllamaProvider:
 
     def __init__(self):
+        self.client = Client(host="http://localhost:11434")
+        self.model = "llama3.2"
 
-        self.client = Client(
-            host="http://localhost:11434"
-        )
-
-    def generate(
-        self,
-        prompt: str
-    ) -> str:
+    def generate(self, prompt: str):
 
         response = self.client.chat(
-
-            model=OLLAMA_MODEL,
-
+            model=self.model,
             messages=[
                 {
                     "role": "user",
                     "content": prompt
                 }
             ]
-
         )
 
         return response["message"]["content"]
+
+    def stream(self, prompt: str):
+
+        stream = self.client.chat(
+            model=self.model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            stream=True
+        )
+
+        for chunk in stream:
+
+            yield chunk["message"]["content"]

@@ -1,8 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class ChatRequest(BaseModel):
-    question: str
+    question: str = Field(
+        ...,
+        min_length=1,
+        description="User question",
+    )
+
+    session_id: str = Field(
+        default="default",
+        description="Conversation session identifier",
+    )
 
 
 class ChatResponse(BaseModel):

@@ -4,6 +4,11 @@ from src.retrieval.retrieval_models import (
     RetrievalResponse,
 )
 
+from src.logging.logger import setup_logger
+
+
+logger = setup_logger(__name__)
+
 
 class RetrievalService:
     """
@@ -12,14 +17,26 @@ class RetrievalService:
     """
 
     @staticmethod
-    def search(query: str, k: int = 5) -> RetrievalResponse:
+    def search(
+        query: str,
+        k: int = 10,
+    ) -> RetrievalResponse:
 
-        results = Retriever.retrieve(query, k)
+        logger.info(
+            "RetrievalService searching. query='%s' k=%d",
+            query,
+            k,
+        )
 
-        ids = results["ids"][0]
-        docs = results["documents"][0]
-        metas = results["metadatas"][0]
-        distances = results["distances"][0]
+        results = Retriever.retrieve(
+            query,
+            k,
+        )
+
+        ids = results.get("ids", [[]])[0]
+        docs = results.get("documents", [[]])[0]
+        metas = results.get("metadatas", [[]])[0]
+        distances = results.get("distances", [[]])[0]
 
         chunks = []
 
@@ -27,35 +44,36 @@ class RetrievalService:
             ids,
             docs,
             metas,
-            distances
+            distances,
         ):
 
             chunks.append(
-
                 RetrievedChunk(
-
                     chunk_id=chunk_id,
-
-                    document_name=meta["document_name"],
-
-                    page_number=meta["page"],
-
-                    chunk_index=meta["chunk_index"],
-
+                    document_name=meta.get(
+                        "document_name",
+                        "Unknown",
+                    ),
+                    page_number=meta.get(
+                        "page",
+                        0,
+                    ),
+                    chunk_index=meta.get(
+                        "chunk_index",
+                        0,
+                    ),
                     text=text,
-
-                    distance=distance
-
+                    distance=distance,
                 )
-
             )
 
+        logger.info(
+            "RetrievalService returned %d chunks",
+            len(chunks),
+        )
+
         return RetrievalResponse(
-
             query=query,
-
             total_results=len(chunks),
-
-            chunks=chunks
-
+            chunks=chunks,
         )

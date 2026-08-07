@@ -1,56 +1,82 @@
 from collections import defaultdict
+from datetime import datetime
 
 from src.memory.conversation import Message
 
 
 class MemoryService:
-    """
-    Simple in-memory conversation store.
-
-    Can later be replaced by:
-    - Redis
-    - PostgreSQL
-    - MongoDB
-    """
-
-    MAX_HISTORY = 10
 
     _memory = defaultdict(list)
 
+    MAX_HISTORY = 10
+
     @classmethod
-    def add_user_message(cls, session_id: str, message: str):
+    def add_user_message(
+        cls,
+        session_id: str,
+        content: str
+    ):
+
         cls._memory[session_id].append(
+
             Message(
+
                 role="user",
-                content=message
+
+                content=content,
+
+                timestamp=datetime.utcnow()
+
             )
+
         )
 
         cls._trim(session_id)
 
     @classmethod
-    def add_assistant_message(cls, session_id: str, message: str):
+    def add_assistant_message(
+        cls,
+        session_id: str,
+        content: str
+    ):
+
         cls._memory[session_id].append(
+
             Message(
+
                 role="assistant",
-                content=message
+
+                content=content,
+
+                timestamp=datetime.utcnow()
+
             )
+
         )
 
         cls._trim(session_id)
 
     @classmethod
-    def get_history(cls, session_id: str):
+    def history(
+        cls,
+        session_id: str
+    ):
 
         return cls._memory[session_id]
 
     @classmethod
-    def clear(cls, session_id: str):
+    def clear(
+        cls,
+        session_id: str
+    ):
 
         cls._memory.pop(session_id, None)
 
     @classmethod
-    def _trim(cls, session_id: str):
+    def _trim(
+        cls,
+        session_id: str
+    ):
 
         if len(cls._memory[session_id]) > cls.MAX_HISTORY:
 

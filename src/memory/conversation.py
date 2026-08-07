@@ -1,12 +1,12 @@
-from pydantic import BaseModel
-from typing import List
+from dataclasses import dataclass
+from datetime import datetime
 
 
-class Message(BaseModel):
+@dataclass
+class Message:
+
     role: str
+
     content: str
 
-
-class Conversation(BaseModel):
-    session_id: str
-    messages: List[Message] = []
+    timestamp: datetime

@@ -3,17 +3,19 @@ from pathlib import Path
 import chromadb
 from fastapi import APIRouter, HTTPException
 
-from src.config.settings import Settings
+from src.config.settings import settings
 
-router = APIRouter(prefix="/documents", tags=["Documents"])
-
+router = APIRouter(
+    prefix="/documents",
+    tags=["Documents"]
+)
 
 client = chromadb.PersistentClient(
-    path=Settings.CHROMA_PATH
+    path=settings.CHROMA_PATH
 )
 
 collection = client.get_collection(
-    Settings.COLLECTION_NAME
+    settings.COLLECTION_NAME
 )
 
 @router.get("/")

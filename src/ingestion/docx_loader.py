@@ -1,18 +1,22 @@
+﻿from pathlib import Path
 from docx import Document
 
+
 class DocxLoader:
-    def load(self, file_path: str) -> str:
-        """
-        Load the content of a DOCX file.
-
-        Args:
-            file_path (str): The path to the DOCX file.
-
-        Returns:
-            str: The text content of the DOCX file.
-        """
+    @staticmethod
+    def load(file_path: Path) -> tuple[str, int]:
         document = Document(file_path)
+
         full_text = []
+
         for paragraph in document.paragraphs:
-            full_text.append(paragraph.text)
-        return '\n'.join(full_text)
+            if paragraph.text.strip():
+                full_text.append(paragraph.text)
+
+        text = "\n".join(full_text)
+
+        # python-docx does not provide physical page counts.
+        # Treat the document as one logical page.
+        pages = 1
+
+        return text, pages

@@ -35,13 +35,13 @@ class IngestionPipeline:
         extension = os.path.splitext(file_path)[1].lower()
 
         if extension == ".pdf":
-            text = self.pdf_loader.load(file_path)
+            text, pages = self.pdf_loader.load(file_path)
 
         elif extension == ".docx":
-            text = self.docx_loader.load(file_path)
+            text, pages = self.docx_loader.load(file_path)
 
         elif extension == ".txt":
-            text = self.txt_loader.load(file_path)
+            text, pages = self.txt_loader.load(file_path)
 
         elif extension in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]:
             text = self.ocr.extract(file_path)
@@ -52,12 +52,13 @@ class IngestionPipeline:
         else:
             return Document(
                 source_path=file_path,
-                extracted_text="",
-                clean_text="",
-                metadata={},
-                language="unknown",
-                valid=False,
-                error="Unsupported file type",
+                extracted_text=text,
+                clean_text=normalized_text,
+                pages=pages,
+                metadata=metadata,
+                language=language,
+                valid=True,
+                error=None,
             )
 
         valid, error = self.validator.validate(file_path, text)
@@ -65,12 +66,13 @@ class IngestionPipeline:
         if not valid:
             return Document(
                 source_path=file_path,
-                extracted_text=text,
+                extracted_text="",
                 clean_text="",
+                pages=0,
                 metadata={},
                 language="unknown",
                 valid=False,
-                error=error,
+                error="Unsupported file type",
             )
 
         clean_text = self.cleaner.clean(text)

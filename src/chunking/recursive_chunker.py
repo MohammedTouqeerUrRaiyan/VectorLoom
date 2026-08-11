@@ -1,6 +1,9 @@
+from pathlib import Path
 from uuid import uuid4
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import (
+    RecursiveCharacterTextSplitter
+)
 
 from src.chunking.chunk_models import Chunk
 
@@ -31,7 +34,7 @@ class RecursiveChunker:
             ]
         )
 
-        pieces = splitter.split_text(document.text)
+        pieces = splitter.split_text(document.clean_text)
 
         chunks = []
 
@@ -41,7 +44,10 @@ class RecursiveChunker:
 
                 chunk_id=str(uuid4()),
 
-                document_name=document.filename,
+                document_name=document.metadata.get(
+                        "filename",
+                        Path(document.source_path).name
+                    ),
 
                 page_number=1,
 

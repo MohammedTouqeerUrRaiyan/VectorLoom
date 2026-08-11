@@ -1,6 +1,4 @@
-from src.chunking.cleaner import TextCleaner
 from src.chunking.chunker import Chunker
-
 from src.embeddings.embedding_service import EmbeddingService
 
 
@@ -9,12 +7,10 @@ class ChunkService:
     @staticmethod
     def process(document):
 
-        document.text = TextCleaner.clean(
-            document.text
-        )
-
+        # 1. Split already-cleaned document text
         chunks = Chunker.split(document)
 
+        # 2. Generate embeddings
         chunks = EmbeddingService.embed_chunks(
             chunks
         )

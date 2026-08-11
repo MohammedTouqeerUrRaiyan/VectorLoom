@@ -1,52 +1,19 @@
 from pathlib import Path
 
-from src.ingestion.document_loader import DocumentLoader
-from src.ingestion.metadata import MetadataExtractor
-from src.ingestion.models import Document
+from src.ingestion.document import Document
+from src.ingestion.pipeline import IngestionPipeline
 
 
 class IngestionService:
     """
-    Orchestrates the document ingestion pipeline.
+    Orchestrates document ingestion.
     """
 
-    @staticmethod
-    def process(file_path: Path) -> Document:
-        """
-        Processes a document and returns a standardized
-        Document object.
-        """
+    _pipeline = IngestionPipeline()
 
-        # ----------------------------------------
-        # Extract metadata
-        # ----------------------------------------
+    @classmethod
+    def process(cls, file_path):
 
-        metadata = MetadataExtractor.extract(file_path)
+        file_path = Path(file_path)
 
-        # ----------------------------------------
-        # Load document
-        # ----------------------------------------
-
-        text, pages = DocumentLoader.load(file_path)
-
-        # ----------------------------------------
-        # Create standardized document
-        # ----------------------------------------
-
-        document = Document(
-
-            filename=metadata["filename"],
-
-            extension=metadata["extension"],
-
-            pages=pages,
-
-            characters=len(text),
-
-            text=text,
-
-            metadata=metadata
-
-        )
-
-        return document
+        return cls._pipeline.run(file_path)

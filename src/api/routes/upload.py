@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 
 from src.chunking.chunk_service import ChunkService
-from src.embeddings.embedding_service import EmbeddingService
+
 from src.ingestion.ingestion_service import IngestionService
 from src.schemas.upload_schema import UploadResponse
 from src.services.file_service import FileService
@@ -23,7 +23,6 @@ async def upload_document(file: UploadFile = File(...)):
 
     chunks = ChunkService.process(document)
 
-    EmbeddingService.embed_chunks(chunks)
 
     StoreService.add(chunks)
 

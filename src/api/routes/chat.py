@@ -19,7 +19,8 @@ router = APIRouter()
 async def chat(request: ChatRequest):
     # 1. Log user message immediately to guarantee complete conversation history
     MemoryService.add_user_message(
-        session_id=request.session_id, message=request.question
+        session_id=request.session_id,
+        content=request.question
     )
 
     # Contextual query rewriter
@@ -70,7 +71,8 @@ async def chat(request: ChatRequest):
 
     # 6. Log Assistant response to session history
     MemoryService.add_assistant_message(
-        session_id=request.session_id, message=answer
+        session_id=request.session_id,
+        content=answer
     )
 
     # 7. Deduplicate Sources safely

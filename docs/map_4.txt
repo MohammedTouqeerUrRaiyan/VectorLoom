@@ -1,0 +1,71 @@
+                    VECTORLOOM
+                         │
+                    User uploads
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │ FileService │
+                  └──────┬──────┘
+                         ▼
+                 IngestionService
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+          Extraction            Metadata
+              │
+              ▼
+          Cleaning
+              │
+              ▼
+        Normalization
+              │
+              ▼
+       Language Detection
+              │
+              ▼
+        ChunkService
+              │
+              ▼
+          Embeddings
+              │
+              ▼
+           ChromaDB
+              │
+              │
+              │
+        USER ASKS QUESTION
+              │
+              ▼
+        QueryRewriter
+              │
+              ▼
+       Query Embedding
+              │
+              ▼
+        ┌───────────────┐
+        │ Hybrid Search │
+        └───────┬───────┘
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+   Vector Search       BM25
+        │                │
+        └───────┬────────┘
+                ▼
+         Result Merger
+                │
+                ▼
+           Cross Encoder
+            Reranking
+                │
+                ▼
+          Prompt Builder
+                │
+                ▼
+             Ollama
+                │
+                ▼
+        Citation Service
+                │
+                ▼
+             Answer

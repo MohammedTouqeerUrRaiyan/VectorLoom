@@ -18,4 +18,4 @@ class Chunk(BaseModel):
 
     metadata: dict
 
-    embedding: Optional[list[float]] = None
+    embedding: list[float] | None = None

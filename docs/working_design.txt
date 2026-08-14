@@ -1,0 +1,22 @@
+                    ┌──────────────────┐
+                    │ Popularity Model │
+                    └────────┬─────────┘
+                             │
+                             ▼
+User ───────────────► Candidate Generator
+                             ▲
+                             │
+                    ┌────────┴─────────┐
+                    │                  │
+              Collaborative      Content-Based
+                 Filtering         Similarity
+                    │                  │
+                    └────────┬─────────┘
+                             ▼
+                       Candidate Pool
+                             │
+                             ▼
+                         Ranker
+                             │
+                             ▼
+                    Top-N Recommendations

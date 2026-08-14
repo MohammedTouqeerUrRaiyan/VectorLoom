@@ -1,0 +1,31 @@
+                    H&M DATA
+                       │
+          ┌────────────┼────────────┐
+          ↓            ↓            ↓
+    Transactions    Customers    Articles
+          │            │            │
+          └────────────┼────────────┘
+                       ↓
+                    PySpark
+                       ↓
+              Feature Engineering
+                       ↓
+              Contextual Features
+                       ↓
+              Two-Tower Network
+                 ↙          ↘
+          Query Tower    Candidate Tower
+              ↓               ↓
+         User Vector      Item Vector
+                 ↘         ↙
+                    FAISS
+                      ↓
+                 Top-K Items
+                      ↓
+                    Redis
+                      ↓
+                   FastAPI
+                      ↓
+              Recommendation API
+                      ↓
+                   Airflow

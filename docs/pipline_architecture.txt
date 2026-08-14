@@ -1,0 +1,62 @@
+                    USER
+                     │
+                     ▼
+              ChatRequest
+                     │
+                     ▼
+              Validate Input
+                     │
+                     ▼
+            QueryRewriter
+                     │
+              ┌──────┴──────┐
+              │             │
+       standalone       contextual
+              │             │
+              └──────┬──────┘
+                     ▼
+              rewritten query
+                     │
+                     ▼
+                CacheService
+                     │
+              ┌──────┴──────┐
+              │             │
+            HIT             MISS
+              │             │
+              │             ▼
+              │     RetrievalService
+              │             │
+              │             ▼
+              │      Vector Retrieval
+              │             │
+              │             ▼
+              │      HybridRetriever
+              │          /       \
+              │       Vector     BM25
+              │          \       /
+              │           \     /
+              │        ResultMerger
+              │             │
+              │             ▼
+              │       RerankService
+              │             │
+              └─────────────┤
+                            ▼
+                     Best 5 chunks
+                            │
+                            ▼
+                     PromptBuilder
+                            │
+                            ▼
+                       LLMService
+                            │
+                            ▼
+                    CitationService
+                            │
+                            ▼
+                     Final Answer
+                            │
+                  ┌─────────┴─────────┐
+                  ▼                   ▼
+             User Memory        Assistant Memory

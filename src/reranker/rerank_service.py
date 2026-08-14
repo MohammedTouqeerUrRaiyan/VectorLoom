@@ -6,12 +6,27 @@ logger = setup_logger(__name__)
 
 class RerankService:
     """
-    Re-ranks retrieved chunks using a Cross Encoder.
+    Re-ranks retrieved chunks using a Cross Encoder and filters
+    out chunks that are not sufficiently relevant to the question.
 
-    Input chunks may be dictionaries or Pydantic models.
-    Output is normalized to dictionaries so it remains
-    compatible with ResultMerger and downstream services.
+    Input:
+        - dictionaries
+        - Pydantic models
+        - compatible objects
+
+    Output:
+        - normalized dictionaries containing rerank_score
+        - only sufficiently relevant chunks
     """
+
+    # Cross-encoder relevance threshold.
+    #
+    # Based on the current model behavior:
+    #   Relevant VectorLoom chunk  -> approximately +10
+    #   Irrelevant chunks          -> approximately -11
+    #
+    # 0.0 provides a conservative separation boundary.
+    RELEVANCE_THRESHOLD = 0.0
 
     @staticmethod
     def rerank(
@@ -39,12 +54,17 @@ class RerankService:
         question = question.strip()
 
         logger.info(
-            "Starting reranking. Candidates=%d top_k=%d",
+            "Starting reranking. Candidates=%d top_k=%d threshold=%.2f",
             len(chunks),
             top_k,
+            RerankService.RELEVANCE_THRESHOLD,
         )
 
         model = CrossEncoderModel.get_model()
+
+        # --------------------------------------------------
+        # Normalize chunks
+        # --------------------------------------------------
 
         normalized_chunks = []
 
@@ -96,15 +116,17 @@ class RerankService:
             if not normalized.get("text"):
                 continue
 
-            normalized_chunks.append(
-                normalized
-            )
+            normalized_chunks.append(normalized)
 
         if not normalized_chunks:
             logger.warning(
                 "No valid chunks available for reranking."
             )
             return []
+
+        # --------------------------------------------------
+        # Cross Encoder scoring
+        # --------------------------------------------------
 
         pairs = [
             (
@@ -120,22 +142,27 @@ class RerankService:
         )
 
         try:
-            scores = model.predict(
-                pairs
-            )
+            scores = model.predict(pairs)
+
         except Exception:
             logger.exception(
                 "Cross Encoder prediction failed."
             )
             raise
 
+        # --------------------------------------------------
+        # Attach scores
+        # --------------------------------------------------
+
         for chunk, score in zip(
             normalized_chunks,
             scores,
         ):
-            chunk["rerank_score"] = float(
-                score
-            )
+            chunk["rerank_score"] = float(score)
+
+        # --------------------------------------------------
+        # Sort by relevance
+        # --------------------------------------------------
 
         normalized_chunks.sort(
             key=lambda chunk: chunk.get(
@@ -145,9 +172,38 @@ class RerankService:
             reverse=True,
         )
 
-        results = normalized_chunks[
-            :top_k
+        # --------------------------------------------------
+        # Relevance filtering
+        # --------------------------------------------------
+
+        relevant_chunks = [
+            chunk
+            for chunk in normalized_chunks
+            if chunk.get(
+                "rerank_score",
+                float("-inf"),
+            ) >= RerankService.RELEVANCE_THRESHOLD
         ]
+
+        filtered_count = (
+            len(normalized_chunks)
+            - len(relevant_chunks)
+        )
+
+        logger.info(
+            "Reranking relevance filter. "
+            "Before=%d Relevant=%d Filtered=%d Threshold=%.2f",
+            len(normalized_chunks),
+            len(relevant_chunks),
+            filtered_count,
+            RerankService.RELEVANCE_THRESHOLD,
+        )
+
+        # --------------------------------------------------
+        # Top-K after relevance filtering
+        # --------------------------------------------------
+
+        results = relevant_chunks[:top_k]
 
         logger.info(
             "Reranking completed. "

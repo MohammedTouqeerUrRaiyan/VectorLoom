@@ -5,10 +5,12 @@ from fastapi import APIRouter, HTTPException
 
 from src.config.settings import settings
 
+
 router = APIRouter(
     prefix="/documents",
-    tags=["Documents"]
+    tags=["Documents"],
 )
+
 
 client = chromadb.PersistentClient(
     path=settings.CHROMA_PATH
@@ -18,8 +20,12 @@ collection = client.get_collection(
     settings.COLLECTION_NAME
 )
 
+
 @router.get("/")
 async def list_documents():
+    """
+    List all documents currently stored in the vector database.
+    """
 
     data = collection.get(
         include=["metadatas"]
@@ -27,44 +33,51 @@ async def list_documents():
 
     documents = {}
 
-    for meta in data["metadatas"]:
+    for meta in data.get("metadatas", []):
+        if not meta:
+            continue
 
-        name = meta["document_name"]
+        name = meta.get("document_name")
+
+        if not name:
+            continue
 
         if name not in documents:
-
             documents[name] = {
                 "name": name,
                 "pages": set(),
-                "chunks": 0
+                "chunks": 0,
             }
 
-        documents[name]["pages"].add(
-            meta["page"]
-        )
+        page = meta.get("page")
+
+        if page is not None:
+            documents[name]["pages"].add(page)
 
         documents[name]["chunks"] += 1
 
     response = []
 
     for doc in documents.values():
-
         response.append(
-
             {
                 "name": doc["name"],
                 "pages": len(doc["pages"]),
-                "chunks": doc["chunks"]
+                "chunks": doc["chunks"],
             }
-
         )
 
     return response
 
+
 @router.delete("/{document_name}")
 async def delete_document(
-    document_name: str
+    document_name: str,
 ):
+    """
+    Delete all chunks belonging to a document
+    from the vector database and remove the uploaded file.
+    """
 
     data = collection.get(
         include=["metadatas"]
@@ -73,39 +86,36 @@ async def delete_document(
     ids_to_delete = []
 
     for idx, meta in zip(
-        data["ids"],
-        data["metadatas"]
+        data.get("ids", []),
+        data.get("metadatas", []),
     ):
+        if not meta:
+            continue
 
-        if meta["document_name"] == document_name:
-
+        if meta.get("document_name") == document_name:
             ids_to_delete.append(idx)
 
     if not ids_to_delete:
-
         raise HTTPException(
             status_code=404,
-            detail="Document not found."
+            detail="Document not found.",
         )
 
     collection.delete(
         ids=ids_to_delete
     )
 
-    uploads = Path(
-        Settings.UPLOAD_FOLDER
+    upload_folder = Path(
+        settings.UPLOAD_FOLDER
     )
 
-    pdf = uploads / document_name
+    uploaded_file = upload_folder / document_name
 
-    if pdf.exists():
-
-        pdf.unlink()
+    if uploaded_file.exists():
+        uploaded_file.unlink()
 
     return {
-
         "status": "success",
-
-        "message": f"{document_name} deleted."
-
+        "message": f"{document_name} deleted.",
+        "chunks_deleted": len(ids_to_delete),
     }

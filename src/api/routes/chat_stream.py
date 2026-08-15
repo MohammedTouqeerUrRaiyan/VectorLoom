@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/chat-stream")
 async def chat_stream(request: ChatRequest):
 
-    session_id = "demo"
+    session_id = request.session_id
 
     MemoryService.add_user_message(
         session_id,

@@ -1,0 +1,44 @@
+                         ┌───────────────────┐
+                         │     Frontend      │
+                         │ Streamlit / Web   │
+                         └─────────┬─────────┘
+                                   │
+                                   ▼
+                         ┌───────────────────┐
+                         │     FastAPI       │
+                         │      API          │
+                         └─────────┬─────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    │                             │
+                    ▼                             ▼
+             ┌──────────────┐             ┌──────────────┐
+             │ RAG Service  │             │ Recommendation│
+             └──────┬───────┘             │   Service    │
+                    │                      └──────┬───────┘
+                    ▼                             │
+             Ingestion → Chunking                 │
+                    ↓                             │
+               Embeddings                         │
+                    ↓                             │
+              Vector Store                        │
+                    ↓                             │
+               Retrieval                          │
+                    ↓                             │
+               Reranking                          │
+                    ↓                             │
+                  LLM                              │
+                    │                             │
+                    │                    ┌────────┴────────┐
+                    │                    │                 │
+                    │                    ▼                 ▼
+                    │             Collaborative       Content
+                    │             Similarity          Similarity
+                    │                    │                 │
+                    │                    └────────┬────────┘
+                    │                             ▼
+                    │                       Hybrid Model
+                    │                             │
+                    └──────────────┬──────────────┘
+                                   ▼
+                              Final Response

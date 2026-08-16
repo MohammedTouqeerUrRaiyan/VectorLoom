@@ -1,1 +1,1 @@
-﻿VectorLoom is an AI-powered document intelligence and retrieval system. It extracts documents, cleans text, creates chunks, generates embeddings, and stores them in a vector database.
+﻿VectorLoom is an AI-powered document intelligence and retrieval system. It extracts documents, cleans text, creates chunks, generates embeddings, and stores them in a vector database

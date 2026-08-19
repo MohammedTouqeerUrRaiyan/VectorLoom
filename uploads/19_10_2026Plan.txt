@@ -1,0 +1,28 @@
+React
+  │
+  │ HTTP
+  ▼
+FastAPI
+  │
+  ├── Customer Service
+  │
+  ├── Recommendation API
+  │
+  └── RAG/Chat API
+        │
+        ▼
+Recommendation Engine
+----------------------------------------------------------
+Frontend tests
+
+Login
+   ↓
+Home
+   ↓
+Recommendations
+   ↓
+Product details
+   ↓
+Chat
+   ↓
+Logout

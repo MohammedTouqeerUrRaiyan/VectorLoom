@@ -1,0 +1,27 @@
+                         VECTORLOOM
+                             │
+                 ┌───────────┴───────────┐
+                 │                       │
+             React UI               FastAPI API
+                 │                       │
+                 │             ┌─────────┼──────────┐
+                 │             │         │          │
+                 │         Customer   Recommend    RAG
+                 │          Service    Service    Pipeline
+                 │             │         │          │
+                 │             │         │      ┌───┴────┐
+                 │             │         │      │        │
+                 │             │         │   Retrieval  LLM
+                 │             │         │
+                 │             │    ┌────┴────┐
+                 │             │    │         │
+                 │             │ Collaborative Content
+                 │             │    │         │
+                 │             │    └────┬────┘
+                 │             │         │
+                 │             │    Hybrid Score
+                 │             │         │
+                 └─────────────┴─────────┴───────┐
+                                                 │
+                                         Personalized
+                                         Recommendations

@@ -10,7 +10,11 @@ from src.api.routes.recommendation import (
 )
 
 
-api_router = APIRouter()
+api_router.include_router(
+    recommendation_router,
+    prefix="/recommendations",
+    tags=["Recommendations"],
+)
 
 
 # ==========================================================

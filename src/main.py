@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 
+from fastapi.middleware.cors import CORSMiddleware
 from src.api.routes import chat
 from src.api.routes import chat_stream
 from src.api.routes import document
 from src.api.routes import health
 from src.api.routes import upload
+from src.api.routes import recommendation
 
 from src.config.settings import settings
 
@@ -19,6 +21,18 @@ app = FastAPI(
     debug=settings.DEBUG,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ==========================================================
 # ROUTES
@@ -52,6 +66,16 @@ app.include_router(
     chat_stream.router,
     prefix=settings.API_PREFIX,
     tags=["Chat Stream"],
+)
+
+# ==========================================================
+# RECOMMENDATIONS
+# ==========================================================
+
+app.include_router(
+    recommendation.router,
+    prefix=settings.API_PREFIX + "/recommendations",
+    tags=["Recommendations"],
 )
 
 

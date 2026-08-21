@@ -1,23 +1,50 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.config import settings
 from src.api.router import api_router
 
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Context-Aware Neural Recommendation Engine"
+    description="Context-Aware Neural Recommendation Engine",
 )
+
+
+# ==========================================================
+# CORS
+# ==========================================================
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ==========================================================
+# API ROUTES
+# ==========================================================
 
 app.include_router(
     api_router,
-    prefix=settings.API_PREFIX
+    prefix=settings.API_PREFIX,
 )
 
+
+# ==========================================================
+# ROOT
+# ==========================================================
 
 @app.get("/")
 async def root():
     return {
         "project": "VectorLoom",
-        "status": "Running"
+        "status": "Running",
     }
